@@ -1,0 +1,80 @@
+from sqlalchemy import create_engine, text
+
+user = "root"
+password = "20071607"
+host = "localhost"
+port = 3306
+database = "db_atividade17"
+
+engine = create_engine(f"mysql+pymysql://{user}:{password}@{host}:{port}/{database}")
+
+with engine.connect() as conn:
+    conn.execute(text("""
+        CREATE TABLE IF NOT EXISTS Autores (
+            ID_autor INT AUTO_INCREMENT PRIMARY KEY,
+            Nome_autor VARCHAR(255) NOT NULL,
+            Nacionalidade VARCHAR(255),
+            Data_nascimento DATE,
+            Biografia TEXT
+        )
+    """))
+
+    conn.execute(text("""
+        CREATE TABLE IF NOT EXISTS generos (
+            id_genero INT AUTO_INCREMENT PRIMARY KEY,
+            nome_genero VARCHAR(255) NOT NULL
+        )
+    """))
+
+    conn.execute(text("""
+        CREATE TABLE IF NOT EXISTS Editoras (
+            ID_editora INT AUTO_INCREMENT PRIMARY KEY,
+            Nome_editora VARCHAR(255) NOT NULL,
+            Endereco_editora TEXT
+        )
+    """))
+
+    conn.execute(text("""
+        CREATE TABLE IF NOT EXISTS usuarios (
+            id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+            nome_usuario VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            numero_telefone VARCHAR(20),
+            data_inscricao DATE,
+            multa_atual DECIMAL(10,2) DEFAULT 0.00,
+            senha VARCHAR(255) NOT NULL
+        )
+    """))
+
+    conn.execute(text("""
+        CREATE TABLE IF NOT EXISTS Livros (
+            ID_livro INT AUTO_INCREMENT PRIMARY KEY,
+            Titulo VARCHAR(255) NOT NULL,
+            Autor_id INT,
+            ISBN VARCHAR(20),
+            Ano_publicacao INT,
+            Genero_id INT,
+            Editora_id INT,
+            Quantidade_disponivel INT DEFAULT 0,
+            Resumo TEXT,
+            FOREIGN KEY (Autor_id) REFERENCES Autores(ID_autor),
+            FOREIGN KEY (Genero_id) REFERENCES generos(id_genero),
+            FOREIGN KEY (Editora_id) REFERENCES Editoras(ID_editora)
+        )
+    """))
+
+    conn.execute(text("""
+        CREATE TABLE IF NOT EXISTS Emprestimos (
+            ID_emprestimo INT AUTO_INCREMENT PRIMARY KEY,
+            Usuario_id INT,
+            Livro_id INT,
+            Data_emprestimo DATE,
+            Data_devolucao_prevista DATE,
+            Data_devolucao_real DATE,
+            Status_emprestimo ENUM('pendente', 'devolvido', 'atrasado'),
+            FOREIGN KEY (Usuario_id) REFERENCES Usuarios(id_usuario),
+            FOREIGN KEY (Livro_id) REFERENCES Livros(ID_livro)
+        )
+    """))
+
+    print("Tabelas criadas ou já existiam.")
