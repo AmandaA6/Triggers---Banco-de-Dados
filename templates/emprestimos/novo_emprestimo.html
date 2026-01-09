@@ -1,0 +1,47 @@
+{% extends "index.html" %}
+
+{% block content %}
+<h2>Novo Empréstimo</h2>
+
+<form method="POST">
+    <div class="form-group">
+        <label for="usuario_id">Usuário:</label>
+        <select id="usuario_id" name="usuario_id" required>
+            <option value="">Selecione um usuário</option>
+            {% for usuario in usuarios %}
+                <option value="{{ usuario.id_usuario }}">
+                    {{ usuario.nome_usuario }} 
+                    {% if usuario.multa_atual > 0 %}
+                        (Multa pendente: R$ {{ "%.2f"|format(usuario.multa_atual) }})
+                    {% endif %}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="livro_id">Livro:</label>
+        <select id="livro_id" name="livro_id" required>
+            <option value="">Selecione um livro</option>
+            {% for livro in livros %}
+                <option value="{{ livro.ID_livro }}">{{ livro.Titulo }} (Disponível: {{ livro.Quantidade_disponivel }})</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="data_emprestimo">Data do Empréstimo:</label>
+        <input type="date" id="data_emprestimo" name="data_emprestimo" value="{{ today }}" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="data_devolucao_prevista">Data de Devolução Prevista (opcional):</label>
+        <input type="date" id="data_devolucao_prevista" name="data_devolucao_prevista">
+        <br><small>Se não informar, será calculada automaticamente (20 dias após o empréstimo)</small>
+    </div>
+    
+    <br>
+    <button type="submit" class="btn">Realizar Empréstimo</button>
+    <a href="{{ url_for('listar_emprestimos') }}" class="btn">Cancelar</a>
+</form>
+{% endblock %}
