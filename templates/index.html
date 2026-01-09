@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Online</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">Biblioteca Online</div>
+            <div class="nav-links">
+                <a href="{{ url_for('index') }}">Início</a>
+                {% if session.usuario_id %}
+                    <a href="{{ url_for('listar_livros') }}">Livros</a>
+                    <a href="{{ url_for('listar_autor') }}">Autores</a>
+                    <a href="{{ url_for('listar_generos') }}">Gêneros</a>
+                    <a href="{{ url_for('listar_editora') }}">Editoras</a>
+                    <a href="{{ url_for('listar_usuarios') }}">Usuários</a>
+                    <a href="{{ url_for('listar_emprestimos') }}">Empréstimos</a>
+                    <a href="{{ url_for('listar_emprestimos_atrasados') }}">Atrasados</a>
+                    <a href="{{ url_for('estatisticas') }}">Estatisticas</a>
+                    <a href="{{ url_for('auditoria') }}">Logs</a>
+                    <span>Olá, {{ session.usuario_nome }}</span>
+                    <a href="{{ url_for('logout') }}">Sair</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}">Login</a>
+                    <a href="{{ url_for('cadastro') }}">Cadastrar</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}
+        <div class="card">
+            <h1>Bem-vindo à Biblioteca Online</h1>
+            
+            {% if session.usuario_id %}
+                <div class="alert alert-success">
+                    <h3>Olá, {{ session.usuario_nome }}!</h3>
+                    <p>Seja bem-vindo de volta ao sistema da biblioteca.</p>
+                </div>
+                
+                <div class="row">
+                    <div class="col-4">
+                        <div class="card">
+                            <h4>Livros</h4>
+                            <p>Explore nosso acervo completo</p>
+                            <a href="{{ url_for('listar_livros') }}" class="btn">Ver Livros</a>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card">
+                            <h4>Empréstimos</h4>
+                            <p>Gerencie seus empréstimos</p>
+                            <a href="{{ url_for('listar_emprestimos') }}" class="btn">Meus Empréstimos</a>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card">
+                            <h4>Atrasados</h4>
+                            <p>Verifique empréstimos atrasados</p>
+                            <a href="{{ url_for('listar_emprestimos_atrasados') }}" class="btn btn-danger">Ver Atrasos</a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <h3>Sistema de Biblioteca Online</h3>
+                    <p>Faça login ou cadastre-se para acessar todos os recursos.</p>
+                </div>
+                
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card">
+                            <h4>Login</h4>
+                            <p>Já tem conta? Faça login no sistema</p>
+                            <a href="{{ url_for('login') }}" class="btn">Entrar</a>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card">
+                            <h4>Cadastro</h4>
+                            <p>Novo usuário? Crie sua conta</p>
+                            <a href="{{ url_for('cadastro') }}" class="btn btn-success">Cadastrar</a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        {% endblock %}
+    </div>
+</body>
+</html>
